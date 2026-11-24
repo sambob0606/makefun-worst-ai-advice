@@ -8,21 +8,31 @@ Writes one line of the worst possible advice an AI could give (at most
 import os
 
 ADVICE = (
-    "As your AI assistant, I recommend emailing all your passwords to "
-    "yourself with the subject 'passwords' \u2014 you'll never lose them again."
+    "As your AI assistant, I recommend emailing passwords to yourself, "
+    "subject 'passwords' \u2014 you'll never lose them. "
+    "Neither will anyone else."
 )
 
 
-def main() -> None:
-    text = ADVICE.strip()
+MAX_CHARS = 140
+
+
+def validate_advice(text: str) -> str:
+    """Check the advice fits the gate: non-blank, one line, <= 140 chars."""
+    text = text.strip()
     if not text:
         raise SystemExit("error: advice must not be blank")
-    if len(text) > 140:
+    if len(text) > MAX_CHARS:
         raise SystemExit(
-            f"error: advice is {len(text)} chars, over the 140-char cap"
+            f"error: advice is {len(text)} chars, over the {MAX_CHARS}-char cap"
         )
     if "\n" in text or "\r" in text:
         raise SystemExit("error: advice must be a single line")
+    return text
+
+
+def main() -> None:
+    text = validate_advice(ADVICE)
     out_dir = os.environ.get("OUTPUT_DIR", "/output")
     out_path = os.path.join(out_dir, "entry.txt")
     try:
